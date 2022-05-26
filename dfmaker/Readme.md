@@ -19,6 +19,6 @@ The data structured by `dfMaker` can be in one `CSV` file, if it was manually sa
 
 fast.mode(fast.mode = `FALSE`, path = "/home/user/filesCSV/")
 
-fast.mode(fast.mode = TRUE, path = "/home/user/filesCSV/dataSet.csv")
+fast.mode(fast.mode = `TRUE`, path = "/home/user/filesCSV/dataSet.csv")
 
 
