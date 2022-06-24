@@ -6,7 +6,7 @@
 
 ## Documentation
 
-La documentación puede encontrarse aquí: [dfMaker.pdf (PDF)](docs/dfMaker.pdf)
+Reference manual: [dfMaker.pdf (PDF)](docs/dfMaker.pdf) (spanish)
 
 
 
