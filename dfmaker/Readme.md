@@ -4,7 +4,13 @@
 
 
 
-### Function atributes
+## Documentation
+
+La documentación puede encontrarse aquí: [dfMaker.pdf (PDF)](docs/dfMaker.pdf)
+
+
+
+## Function atributes
 
 dfMaker(video.folders = "/home/user/outPutOpenPoseFolder/",save.csv = TRUE,output.folder = "/home/user/saveHereCSV",
          return.empty = TRUE)
