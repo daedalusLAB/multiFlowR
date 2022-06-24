@@ -33,9 +33,9 @@ Normalmente la estructura más utilizada y una de las más sencillas para
 manejar variables y observaciones en `R` es el `dataFrame`, siendo la
 estructura más adecuada para trabajar con los datos, o al menos, obtener
 una primera estructura base que permita el estudio de los datos. El
-problema a resolver es que los datos en crudo (*Raw Data*) se presentan
-una estructura de listas jerárquicas y la lista en el último nivel se
-encuentra desestrcturada.
+problema a resolver es que los datos en crudo (*Raw Data*) presentan una
+estructura de listas jerárquicas y la lista en el último nivel se
+encuentra desestructurada.
 
 ## Una estrcuturación en tres pasos
 
@@ -44,25 +44,25 @@ vídeos que se desean comparar, pero previamente hay que estructurar los
 fotogramas que componen los vídeos, y antes de eso las variables que
 componen cada fotogramas (Figura ).
 
-Hay que tener también en cuenta que `dfMaker` obtiene algunas variables
-a partir del nombre del archivo original (Cuadro ) y estas variables en
-caso de presentar una estructura diferente darían como resultado
-columnas vacías (`NA`s ), pero no es problema, pues dichas columnas
-pueden ser eliminadas con suma facilidad. Por otro lado, podría darse el
-caso de querer añadir una variable nueva, siendo necesario modificar el
-código de la función; aun así, las partes principales de la función que
-afectan a la estructuración de los datos obtenidos de `OpenPose` no se
-verían afectadas.
+Hay que tener también en cuenta que `frameMaker` obtiene algunas
+variables a partir del nombre del archivo original (Cuadro ) y estas
+variables en caso de presentar una estructura diferente darían como
+resultado columnas vacías (`NA`s ), pero no es problema, pues dichas
+columnas pueden ser eliminadas con suma facilidad. Por otro lado, podría
+darse el caso de querer añadir una variable nueva, siendo necesario
+modificar el código de la función; aun así, las partes principales de la
+función que afectan a la estructuración de los datos obtenidos de
+`OpenPose` no se verían afectadas.
 
-En realidad `dfMaker` es la única de las tres funciones que trabaja con
-los datos originales, el resto (`videoMaker` y `dfMaker`) simplemente
-repiten la función en el orden y la forma dados para construir un
-`dataFrame` que contenga todos los fotogramas de un vídeo o de varios
-vídeos. En otras palabras, `videoMaker` y `dfMaker` simplemente sirven
-para ahorrar pasos a la hora de copiar y ensamblar los datos, pero no
-aportan estructura a los datos más allá de una simple cadena de montaje;
-caso diferente al de `dfMaker` que es el la función esencial que da el
-orden a los datos.
+En realidad `frameMaker` es la única de las tres funciones que trabaja
+con los datos originales, el resto (`videoMaker` y `dfMaker`)
+simplemente repiten la función en el orden y la forma dados para
+construir un `dataFrame` que contenga todos los fotogramas de un vídeo o
+de varios vídeos. En otras palabras, `videoMaker` y `dfMaker`
+simplemente sirven para ahorrar pasos a la hora de copiar y ensamblar
+los datos, pero no aportan estructura a los datos más allá de una simple
+cadena de montaje; caso diferente al de `frameMaker` que es el la
+función esencial que da el orden a los datos.
 
 Ahora bien, `videoMaker` permite guardar todos los fotogramas en un solo
 archivo dentro de una carpeta conjunta y `dfMaker` repite el número de
@@ -87,25 +87,17 @@ frameMaker<-function(file){
   for (id in 1:length(rawData)) {
     
     if(length(rawData)==0) next
-    
     points<-data.frame(unlist(rawData[[id]]),people=id)
-    
-    dfPoints=rbind(dfPoints,points) 
-    
+    dfPoints=rbind(dfPoints,points)     
   }
   
-  
-  
   pattern<- sample(T, size=137*3, replace= T) # points triplicates
-  
   
   pattern<-c(F,pattern)
   
   if(!is.null(dfPoints)){
     pattern<-rep(pattern, times=max(dfPoints$people))
   }  
-  
-  
   
   dfPoints<-dfPoints[pattern,]
   ##
@@ -116,12 +108,9 @@ frameMaker<-function(file){
  ###
   words<-gsub("_000000.*", "", file)
   
-  
   words<-gsub(".*[0-9]_", "", words)
   
-  
   ###
-  
   frame<-gsub(paste(".*_000", sep = ""), "", file)
   
   frame<-as.numeric(gsub("_.*","", frame))
@@ -362,11 +351,11 @@ El dato introducido por `id_person` debe ser eliminado, además el resto
 de datos deben de ordenarse correctamente en filas y columnas, además de
 ser necesario establecer las variables con las que constará el
 `dataFrame` final. Como ya se ha definido las variables que han de
-conformar el `dataFrame` final (Cuadro ) el siguiente paso será el
-generar y ordenar dichas variables.
+conformar el `dataFrame` final (Cuadro ) el siguiente paso será generar
+y ordenar dichas variables.
 
 Para empezar es necesario crear un patrón de corte que permita dividir
-en tres vectores —correspondientes a las variables (`x`, `y`, `u`)— los
+en tres vectores correspondientes a las variables (`x`, `y`, `c`) los
 datos extraídos. Cada observación (`keyPoint`) se compone de 3 variables
 que han de ser separadas (Cuadro ). Otro factor a tener en cuenta es el
 número de puntos del que se compone cada lista: 137 puntos.
@@ -432,6 +421,12 @@ for (i in 1:max(dfPoints$people)) {
     ## [1] 1237
 
 ``` r
+rownames(dfPoints)[idPosition]
+```
+
+    ## [1] "person_id"  "person_id1" "person_id2" "person_id3"
+
+``` r
 idPosition==which(pattern==FALSE)
 ```
 
@@ -439,7 +434,7 @@ idPosition==which(pattern==FALSE)
 
 El patrón creado permite eliminar `person_id` dejando solo los valores
 correspondientes a las variables espaciales (`x` e `y`) y al grado de
-confianza (`u`) implicando que ahora el número de observaciones es
+confianza (`c`) implicando que ahora el número de observaciones es
 múltiplo de 412 o 137 \* 3:
 
 $$ \\frac{nrow(dfPoints)}{max(people)\*3}=137  $$
@@ -460,7 +455,11 @@ for (i in 1:nrow(dfPoints)) {
  
  magicNumber[i]<-nrow(dfPoints)/(max(dfPoints$people)*3)==i
 
+ 
+  
+  
 }
+
 
 which(magicNumber==T) ## corroboration 137 is the only valid point
 ```
@@ -519,7 +518,7 @@ words
 ``` r
 frame<-gsub(paste(".*", words,"_", sep = ""), "", "/data/home/agora/data/trainningDataVideos/videosJSON//2014-10-10_0600_US_KCAL_Entertainment_Tonight_374-380_ID933_from_beginning_to_end/2014-10-10_0600_US_KCAL_Entertainment_Tonight_374-380_ID933_from_beginning_to_end_000000000128_keypoints.json")
   
-# Important! If the video folder is a subfolder the separator must be // 
+
 # R recognize it without problem and it permits remove the upper folders names 
 
   frame<-as.numeric(gsub("_.*","", frame))
@@ -530,6 +529,7 @@ frame<-gsub(paste(".*", words,"_", sep = ""), "", "/data/home/agora/data/trainni
     ## [1] 128
 
 ``` r
+# Important! If the video folder is a subfolder the separator must be // 
 name<-gsub(paste(".*//", sep = ""), "", "/data/home/agora/data/trainningDataVideos/videosJSON//2014-10-10_0600_US_KCAL_Entertainment_Tonight_374-380_ID933_from_beginning_to_end/2014-10-10_0600_US_KCAL_Entertainment_Tonight_374-380_ID933_from_beginning_to_end_000000000128_keypoints.json")
   
 name<-gsub(paste("/.*", sep = ""), "", name)
@@ -577,14 +577,14 @@ La última variable, `points`, se genera directamente dentro del
 `dataFrame` resultante, teniendo en cuenta que : “*OpenPose extracts 137
 keypoints. 25 keypoints represent the body pose, 70 are facial
 keypoints, and there are 21 keypoints per hand representing the hand
-pose*” (De Coster, Van Herreweghe, y Dambre 2020). `points` consiste la
-repetición del siguiente vector: `c(0:24,0:69,0:20,0:20)`[1].
+pose*” (De Coster, Van Herreweghe, y Dambre 2020). `points` consiste en
+la repetición del siguiente vector: `c(0:24,0:69,0:20,0:20)`[1].
 
 En añadido,hay que tener en cuenta que se puede dar el caso que en un
 fotograma concreto no haya ninguna persona detectada generando un
 `dataFrame` vacío, por ello se introduce una declaración (*if else*),
 así en caso de ser un fotograma sin personas detectadas el resultado de
-la función global (`dfMaker`) es nulo (`NULL`) pero no produce error.
+la función (`frameMaker`) es nulo (`NULL`) pero no produce error.
 
 ``` r
 if(!is.null(dfPoints)){
@@ -2025,14 +2025,14 @@ videoMaker<- function(video.folder,output.folder,save.csv,return.empty) {
 }
 ```
 
-La función `videoMaker` aplica `dfMaker` a todo archivo con extensión
+La función `videoMaker` aplica `frameMaker` a todo archivo con extensión
 `.json` dentro de una carpeta, por ello es importante que todos los
 archivos de un vídeo se encuentren en misma carpeta y no aparezcan
 fotogramas de otro vídeo en dicha carpeta. De darse el caso, se
 produciría un error si `save.csv=T` pues a la hora de crear el archivo
 `.csv` no existiría un solo nombre que es lo que requiere
 (`unique(out$name)`); pero si se diera el caso contrario (`save.csv=F`)
-no se produciría error aunque el `dataFrame` resultante serñia erroneo .
+no se produciría error aunque el `dataFrame` resultante sería erróneo .
 Por lo demás la función ensambla fotogramas sin importar la cantidad de
 los mismos.
 
@@ -2065,11 +2065,11 @@ Al usar el atributo `out.folder` de existir ya la carpeta indicada se
 producirá un `warning()` indicando que el objeto (carpeta) ya existe, de
 lo contrario creará la carpeta y guardará dentro los archivos `.csv`.
 Igualmente, a pesar de que un `warning()` suele preceder a un error, no
-siempre lo es así; en este caso el `warning()` solo indica que la
-carpeta donde se guardan los archivos ya existe. Por si acaso mejor
-asegurarse bien que la ruta (*path*) es correcta, de otro modo los
-`.csv` pueden guardarse en cualquier sitio del *working directory* o
-carpeta del proyecto `R` en el que estamos trabajando (Ver Figura ). .
+siempre es así; en este caso el `warning()` solo indica que la carpeta
+donde se guardan los archivos ya existe. Por si acaso mejor asegurarse
+bien que la ruta (*path*) es correcta, de otro modo los `.csv` pueden
+guardarse en cualquier sitio del *working directory* o carpeta del
+proyecto `R` en el que estamos trabajando (Ver Figura ). .
 
 ![`output.folder` antes (izquierda) y despúes (derecha) de aplicar
 `videoMaker`.](dfMakerGitHub_files/figure-markdown_github/carpeta-1.png)
@@ -2082,11 +2082,10 @@ videoMaker(video.folder = "/data/home/agora/data/trainningDataVideos/videosJSON/
 ```
 
 Al usar la función el resultado es un `dataFrame` con las variables de
-`dfMkarer` pero que en el caso de `frame` se obtiene un vector de
-números naturales —con la excepciñon del 0— de los fotogramas en vez de
-un solo valor para todo el vector, y las variables c, x, y de cada
-fotograma (`dataFrame`) se ensamblan una detrás de otra, dando como
-resultado un `dataFrame` con todas las observaciones.
+`frameMaker` pero que en el caso de `frame` se obtiene un vector de
+números naturales —además del 0— indicando el fotograma y las variables
+c, x, y de cada fotograma (`dataFrame`) se ensamblan una detrás de otra,
+dando como resultado un `dataFrame` con todas las observaciones.
 
 *n**r**o**w*(*d**f*)/137 = *m**a**x*(*f**r**a**m**e*)
 
@@ -2120,7 +2119,7 @@ nrow(sample)/137==length(as.numeric(levels(as.factor(sample$frame))))
 sample$frame->x
 
 
-x=x+1 ## Justa fo te mene
+x=x+1 ## Just for the meme
 
 nrow(sample)/137==max(x)
 ```
@@ -2136,7 +2135,8 @@ los naturales, por ello se suma 1 a cada valor del vector </figcaption>
 
 Por lo demás esta función se puede usar a través de un *loop* que genere
 un `dataFrame` — y los `.csv` en caso de indicarse— compuesto de varios
-vídeos a analizar, aunque `dfMaker` se encarga de ello.
+vídeos a analizar, aunque `dfMaker` se encarga de ello automáticamente
+(Figura ).
 
 # `dfMaker` cuando un solo vídeo no es suficinete
 
@@ -2867,9 +2867,9 @@ tienen el mismo número de fotogramas.
 
 A pesar de no poder definir matemáticamente otras comprobaciones si es
 posible detectar si existe algún error en en la variable people; porque
-el valor más bajo tiene que ser el que más veces se repita, dicho de
-otra forma para detectar a una segunda persona en un fotograma hay que
-detectar a otra antes.
+los valores más bajos tiene que ser los que más veces se repitan, dicho
+de otra forma para detectar a una segunda persona en un fotograma hay
+que detectar a otra antes (Ley de Benford).
 
 La regla anterior no es aplicable a frame debido a que uno o varios
 fotogramas —incluso los primeros— pueden no presentar a ninguna persona
@@ -3009,3 +3009,4 @@ Computing*. Vienna, Austria: R Foundation for Statistical Computing.
 
 </div>
 
+[1] El primer punto es el 0.
