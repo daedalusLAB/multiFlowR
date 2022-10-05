@@ -9,9 +9,7 @@ example<-dfMaker(input.folders = "~/multiFlowR/dfMaker/dfMakerExample/exampleVid
 str(example)
 
 ###############################################################################3
-# Warning!!! The output.folder is inside OpenPoseDataCleaning to use data in
-# cleaning functions
-
+# Warning!!! The output.folder is inside OpenPoseDataCleaning to use data in cleaning functions #
 ##########################################################################
 
 # In this case there is no empty frames, then the scond list is NULL
