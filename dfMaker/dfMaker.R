@@ -70,7 +70,7 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
     frame<-as.numeric(gsub("_.*","", frame))
     ###
     
-    name<-gsub(paste("_",words,".*", sep = ""), "", file)
+    name<-gsub(paste("_",words,".*", sep = ""), words, file)
     name<-gsub(paste(".*/",sep = ""), "", name)
     
     ###
@@ -156,4 +156,5 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
  
  return(result)
 }
+
 

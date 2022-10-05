@@ -1,22 +1,23 @@
-max.people<-function(path,max,full.folder,videos,files){
+maxPeople<-function(path,max,full.folder,fileNames){
   if (full.folder==T) {
-    list.files(path)->videos} else{
+    list.files(path)->files} else{
       
-      read.csv(files)->videos
-      videos[,1]->videos
-      paste(videos,".csv",sep = "")->videos
+      read.table(fileNames)->files
+      files[,1]->files
     }
   
   
   
-  dataVideos=NULL
-  for (i in 1:length(videos)) {
-    read.csv(paste(path,videos[i],sep = ""))->dataOneVideo
-    if (max(dataOneVideo$people)<=max) {
+  dataFiles=NULL
+  for (i in 1:length(files)) {
+    read.csv(paste(path,files[i],sep = ""))->dataOneFile
+    if (max(dataOneFile$people)<=max) {
       
       
-      dataVideos<-rbind(dataVideos,dataOneVideo)
+      dataFiles<-rbind(dataFiles,dataOneFile)
     }}
   
-  return(dataVideos)
+  return(dataFiles)
 }
+
+
