@@ -1,3 +1,3 @@
-2006-01-14_0600_US_KTTV-FOX_Ten_OClock_News_273-275_ID202.csv
-2008-04-15_0600_US_KCET_Tavis_Smiley_239-242_ID678.csv
-2014-10-10_0600_US_KCAL_Entertainment_Tonight_374-380_ID933.csv
+2006-01-14_0600_US_KTTV-FOX_Ten_OClock_News_273-275_ID202back_then.csv
+2014-10-10_0600_US_KCAL_Entertainment_Tonight_374-380_ID933from_beginning_to_end.csv
+2015-03-26_2100_US_WEWS_Live_on_5_1221-1225_ID509later_than.csv

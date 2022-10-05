@@ -2,7 +2,7 @@ maxPeople<-function(path,max,full.folder,fileNames){
   if (full.folder==T) {
     list.files(path)->files} else{
       
-      read.table(fileNames)->files
+      read.table(file=fileNames)->files
       files[,1]->files
     }
   
