@@ -55,9 +55,23 @@ clipCleaner(path = "/home/user/dfMakerOutputCSV/",extract.goodCLips = T, save.go
 # xyCorrector
 
 | :warning: WARNING                                                                                                                                  |
-|:-----------------------------------------------------------------------|
-| From this point functions are only working fore pose_keyPoints other systems must be develop for data from `face_keypoints` and `hands_keypoints`. |
+|:---------------------------------------------------------------------------------------------------------------------------------------------------|
+| From this point functions are only working fore pose_keypoints other systems must be develop for data from `face_keypoints` and `hands_keypoints`. |
+
+OpenPose videos are based on a two dimensional Cartesian coordinate system and a point (0,0) must be defined, and this point can be one of the 25 points in pose_keypoints. `xyCorrector` allows to select one of the 25 points or their combination, x axe and y axe have independent treatment, and to set a detected point in the frame as original point (0,0) and to create a standardised reference system.
+
+![Example of a frame treated with xyCorrector](functionsExamples/xyCorrectorPlot.png)
 
 ### Function attributes
 
-xyCorrector(df = example,df.full = T,set.NAs = T,fixed.point.x = 1,fixed.point.y = 1,reverse.y = T)
+xyCorrector(df = example,df.full = T,set.NAs = T,fixed.point.x = 1,fixed.point.y = 1,reverse.y = T,set.x = T ,set.y = T)
+
+-   `df`: An `R` objcet with `data Frame` structure `str(df)`.
+
+-   `df.full`: Boolean variable (`TRUE`/`FALSE`) to remove `face_keypoint` and `hands_keypoints` in case it has not been done yet.
+
+-   `set.Nas`: Boolean variable (`TRUE`/`FALSE`) to turn 0 values into `NA` values. This is need it because zero (0) now it is a real value (axes origin)
+
+-   `reverse.y` : Boolean variable (`TRUE`/`FALSE`) set as `TRUE` by default. It indicates if the y axis must be inverted or not.
+
+-   `set.x = T`and `set.y = T` : Boolean variables (`TRUE`/`FALSE`) set as `TRUE` by default. If they are set as `FALSE` the function does not transform the axe selected. Treatment of axes are independent.
