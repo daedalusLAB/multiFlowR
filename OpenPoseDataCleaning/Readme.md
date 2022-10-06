@@ -34,6 +34,11 @@ max.people(path = "/home/user/dfMakerOutputCSV/", max = 2,full.folder = `FALSE`,
 
 # `clipCleaner`
 
+
+:notebook: [Example (`R`)](functionsExamples/clipCleanerExample.R)
+
+
+
 Sometimes `OpenPose` detects objects as people which are not people. There is hard to find an universal method to remove all misdetected points. Here is propose a method to remove objects where point 1 (chest point) is not detected in any video's frame.
 
 The method is simple, but for the moment it only works with 2 people detected due to is the simplest case. If a video where we know there is a person and his/her chest appears on frames but the software detects another person which is not there this method is optimal, but for more complex objects a new method must be develop yet.
