@@ -77,7 +77,7 @@ OpenPose videos are based on a two dimensional Cartesian coordinate system and a
 
 :bangbang: `xyCorrector` create two new variables `x2` and `y2` which are the corrections of raw data, but `x` and `y` values are still in the `data frame`. :bangbang:
 
-:notebook: ![Example of a frame treated with xyCorrector](functionsExamples/xyCorrectorPlot.png)
+ ![Example of a frame treated with xyCorrector](functionsExamples/xyCorrectorPlot.png)
 
 ### Function attributes
 
@@ -92,3 +92,38 @@ xyCorrector(df = example,df.full = T,set.NAs = T,fixed.point.x = 1,fixed.point.y
 -   `reverse.y` : Boolean variable (`TRUE`/`FALSE`) set as `TRUE` by default. It indicates if the y axis must be inverted or not.
 
 -   `set.x = T`and `set.y = T` : Boolean variables (`TRUE`/`FALSE`) set as `TRUE` by default. If they are set as `FALSE` the function does not transform the axe selected. Treatment of axes are independent.
+
+
+# `cramerOpenPose`
+
+:notebook: [Example (`R`)](functionsExamples/cramerOpenPoseExample.R)
+
+
+The [Cramer's rule](https://en.wikipedia.org/wiki/Cramer%27s_rule) allows to define the units for our system. In the case of our data the distance between chest and left shoulder (in mirror perspective) has value 1 and the rest of distances takes new values according with this value.
+
+The objetive achive by `CramerOpenPose` is to applay the Cramer's rule to all frames generating a new values for x e y (`nx`,`ny`) where independently of the distance to camera or person position, even if he/she changes position during video the distance between chest and left shoulder is 1.
+
+ ![Example of a frame treated with xyCorrector](functionsExamples/cramerOpenPoseExample.png)
+
+
+| :warning: WARNING                                                                                                                                 |
+|:-----------------------------------------------------------------------|
+| The person must be looking at camera or the distance between the chest and shoulder can null generating an indeterminate ir inconsistent equation system.    |
+
+
+### Function attributes
+
+cramerOpenPose(data = example,v.i =5,orthonormal=T,save.video.csv=T,path.save.videos="home/user/cleanDataCSV/" )
+
+
+* `data` : `R` object with all data from `xyCorrector`. The structure must be `data frame`.
+
+* `v.i` : point from pose_keypoints to create the unit vector for x axe with chest point (0,0). In this case the left shoulder (5).
+
+* `orthonormal`:  Boolean variable (`TRUE`/`FALSE`) to use the same vector (`v.i`) to create the identity matrix.
+
+*  `v.y`: point from pose_keypoints to create the unit vector for y axe with chest point (0,0). Only use when a non-orthogonal system  is desired.
+
+* `save.video.csv`: Boolean variable (`TRUE`/`FALSE`) to save or not normalized data in `csv` files; one file per video.
+
+* `path.save.videos`: The path to save selected `csv` files.
