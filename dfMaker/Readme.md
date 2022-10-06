@@ -4,7 +4,7 @@
 
 ## Documentation
 
-Reference manual: [dfMaker.pdf (PDF)](docs/dfMaker.pdf) (spanish)
+Reference manual: [dfMaker.pdf (PDF)](docs/dfMaker.pdf) Lang: :es:
 
 ## Function atributes
 
