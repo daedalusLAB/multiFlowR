@@ -74,7 +74,10 @@ clipCleaner(path = "/home/user/dfMakerOutputCSV/",extract.goodCLips = T, save.go
 
 OpenPose videos are based on a two dimensional Cartesian coordinate system and a point (0,0) must be defined, and this point can be one of the 25 points in pose_keypoints. `xyCorrector` allows to select one of the 25 points or their combination, x axe and y axe have independent treatment, and to set a detected point in the frame as original point (0,0) and to create a standardised reference system.
 
-![Example of a frame treated with xyCorrector](functionsExamples/xyCorrectorPlot.png)
+
+:bangbang: `xyCorrector` create two new variables `x2` and `y2` which are the corrections of raw data, but `x` and `y` values are still in the `data frame`. :bangbang:
+
+:notebook: ![Example of a frame treated with xyCorrector](functionsExamples/xyCorrectorPlot.png)
 
 ### Function attributes
 
