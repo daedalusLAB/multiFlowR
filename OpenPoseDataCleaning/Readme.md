@@ -39,7 +39,7 @@ max.people(path = "/home/user/dfMakerOutputCSV/", max = 2,full.folder = `FALSE`,
 
 
 
-Sometimes `OpenPose` detects objects as people which are not people. There is hard to find an universal method to remove all misdetected points. Here is propose a method to remove objects where point 1 (chest point) is not detected in any video's frame.
+Sometimes `OpenPose` detects objects as people which are not people. It is hard to find an universal method to remove all misdetected points. Here is propose a method to remove objects where point 1 (chest point) is not detected in any video's frame.
 
 The method is simple, but for the moment it only works with 2 people detected due to is the simplest case. If a video where we know there is a person and his/her chest appears on frames but the software detects another person which is not there this method is optimal, but for more complex objects a new method must be develop yet.
 
@@ -108,7 +108,7 @@ The objetive achive by `CramerOpenPose` is to applay the Cramer's rule to all fr
 
 | :warning: WARNING                                                                                                                                 |
 |:-----------------------------------------------------------------------|
-| The person must be looking at camera or the distance between the chest and shoulder can null generating an indeterminate or inconsistent equation system.    |
+| The person must be looking at camera or the distance between the chest and shoulder can be null, generating an indeterminate or inconsistent equation system.    |
 
 
 ### Function attributes

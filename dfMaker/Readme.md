@@ -14,7 +14,7 @@ dfMaker(input.folders = "/home/user/outPutOpenPoseFolder/",save.csv = TRUE,outpu
 
 -   `save.csv`: Boolean variable to save the output (`TRUE`/`FALSE`).
 
--   `output.folder`: In case `save.csv = TRUE` a path to save files must be provide.
+-   `output.folder`: In case `save.csv = TRUE` a path to save files must be provided.
 
 -   `return.empty`: Boolean variable to get empty frames. It generates a list with the video's name and the number of empty frame.
 
