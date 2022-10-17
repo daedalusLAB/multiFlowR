@@ -1,6 +1,6 @@
 # multiFlowR
 
-`multiflowR` is a project to develop tools for Quantitative linguistics (QL) in general and multi-modal linguistics in particular.
+`multiflowR` is a project to develop tools for Quantitative Linguistics (QL) in general and multi-modal linguistics in particular.
 
 ## dfMaker
 
