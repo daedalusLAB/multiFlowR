@@ -4,9 +4,9 @@
 
 ## dfMaker
 
-`dfMaker` is a function which structures data from [`OpenPose`](https://github.com/CMU-Perceptual-Computing-Lab/openpose) computational vision software to study human body language. It also permits to integrate data from file names when the UCLA's tag structure (date, program, clip start and finish seconds in the video and the searched expression)
+`dfMaker` is a function which structures data from [`OpenPose`](https://github.com/CMU-Perceptual-Computing-Lab/openpose) computational vision software to study human body language. It also permits to integrate data from file names when the UCLA's tag structure when `extra.var= TRUE` (date and the searched expression).
 
-> ***Example UCLA's tag structure:*** 2020-02-21_2100_US_CNN_The_Lead_With_Jake_Tapper_1244-1250_subsequently.mp4.
+> ***Example UCLA's tag structure:*** 2020-02-21_2100_US_CNN_The_Lead_With_Jake_Tapper_1244-1250_subsequently.mp4
 
 `dfMaker` is not a complete function yet and the idea is to incorporate data from other software programs to create multi-modal `data frames` in linguistics.
 

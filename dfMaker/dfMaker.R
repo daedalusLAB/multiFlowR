@@ -1,10 +1,10 @@
-dfMaker<-function(input.folders,save.csv=F, output.folder,return.empty=F) {
+dfMaker<-function(input.folders,save.csv=F, output.folder,return.empty=F, extra.var) {
   
    
  input.folders<-list.dirs(input.folders, full.names=TRUE,recursive = F)
  
  
-videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
+videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.var) {
   
   
   
@@ -15,7 +15,7 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
  
   
   
-  frameMaker<<-function(file){
+  frameMaker<<-function(file, extra.var){
     require(jsonlite)
     
     rawData<-read_json( path = file)
@@ -51,33 +51,49 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
     
     
     dfPoints<-dfPoints[pattern,]
-    ##
+    
+    ### type
     
     type<-rownames(dfPoints)
     type<-gsub("_2d[0-9]*", "", type)
     
-    ###
-    words<-gsub("_0000.*", "", file)
-    
-    
-    words<-gsub(".*[0-9]_", "", words)
-    
-    
-    ###
+
+    ### frame
     
     frame<-gsub(paste(".*_000", sep = ""), "", file)
-    
     frame<-as.numeric(gsub("_.*","", frame))
+    
+    ### name
+    
+    name<-gsub(paste("_00.*", sep = ""),"", file)
+    name<-gsub(paste(".*/",sep = ""), "", name)
+    
+    
     ###
+    triplet<-c(T,F,F)
+    ###    
+    
+    groups <- c("x", "y", "c") # the variables of the final df
+    
+    
+  if (extra.var==TRUE) {
+    
+    ### words
+    
+    words<-gsub("_0000.*", "", file)
+    words<-gsub(".*[0-9]_", "", words)
+    
+    ### name
     
     name<-gsub(paste("_",words,".*", sep = ""), words, file)
     name<-gsub(paste(".*/",sep = ""), "", name)
     
-    ###
+    ### date
     
-    triplet<-c(T,F,F)
-    ###
-    groups <- c("x", "y", "c") # the variables of the final df
+    date<-gsub(paste(".*/",sep = ""), "", file)
+    date<-as.Date(gsub(paste("_.*",sep = ""), "", date))
+    
+    
     if(!is.null(dfPoints)){
       pointsDF<-data.frame(split(dfPoints[,1], f = groups), 
                            people=dfPoints$people[triplet],
@@ -85,11 +101,24 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
                            point= c(0:24,0:69,0:20,0:20),
                            words=words,
                            frame=frame,
+                           name=name,
+                           date=date) # split in 3 columns 
+      return(pointsDF)
+    }else{
+      return(empty)
+    }
+  }else{
+    if(!is.null(dfPoints)){
+      pointsDF<-data.frame(split(dfPoints[,1], f = groups), 
+                           people=dfPoints$people[triplet],
+                           typePoint=  type[triplet],
+                           point= c(0:24,0:69,0:20,0:20),
+                           frame=frame,
                            name=name) # split in 3 columns 
       return(pointsDF)
     }else{
      return(empty)
-    }
+    }}
   
     
   }
@@ -97,7 +126,7 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
   
   for (i in 1:length(files)){
     
-    c <- data.frame(frameMaker(files[i]))
+    c <- data.frame(frameMaker(files[i],extra.var = extra.var))
     
     if (length(c)!=1) {
        out=rbind(out,c)
@@ -138,7 +167,7 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
  for (i in 1:(length(input.folders))) {
   
   
-  dfVideo<-videoMaker( input.folders[i],save.csv = save.csv,output.folder = output.folder,return.empty = return.empty )
+  dfVideo<-videoMaker( input.folders[i],save.csv = save.csv,output.folder = output.folder,return.empty = return.empty, extra.var = extra.var)
   
   if (return.empty==F) {
     
@@ -156,5 +185,4 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty) {
  
  return(result)
 }
-
 
