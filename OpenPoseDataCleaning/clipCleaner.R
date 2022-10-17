@@ -1,7 +1,14 @@
-clipCleaner<- function(path,extract.goodCLips, save.goodClips.path){
+clipCleaner<- function(data,read.path,path,extract.goodCLips, save.goodClips.path){
   
   load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/maxPeople.rda") ## loading function
-  maxPeople(path = path , max = 2,full.folder = TRUE)->data
+ if (read.path==TRUE) {
+   load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/maxPeople.rda") ## loading function
+   maxPeople(path = path , max = 2,full.folder = TRUE)->data
+   
+ }
+  
+
+  
   data[data$typePoint=="pose_keypoints",]->dataPose # only pose_keypoints
   dataPose[dataPose$people==2,]->data2Pose # second ID detected
   
@@ -58,7 +65,6 @@ clipCleaner<- function(path,extract.goodCLips, save.goodClips.path){
       }
   return(dataGood)
 }
-
 
 
 
