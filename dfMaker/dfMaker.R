@@ -60,12 +60,13 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
 
     ### frame
     
-    frame<-gsub(paste(".*_000", sep = ""), "", file)
-    frame<-as.numeric(gsub("_.*","", frame))
+    regmatches(file,regexec( "[0-9]{12}", file))->frame # frame has 12 digits
+    frame<-as.numeric(frame[[1]])
+    
     
     ### name
     
-    name<-gsub(paste("_00.*", sep = ""),"", file)
+    name<-gsub(paste("_[0-9]{12}.*", sep = ""),"", file)
     name<-gsub(paste(".*/",sep = ""), "", name)
     
     
@@ -80,12 +81,12 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
     
     ### words
     
-    words<-gsub("_0000.*", "", file)
+    words<-gsub("_[0-9]{12}.*", "", file)
     words<-gsub(".*[0-9]_", "", words)
     
     ### name
     
-    name<-gsub(paste("_",words,".*", sep = ""), words, file)
+    name<-gsub(paste("_[0-9]{12}.*", sep = ""),"", file)
     name<-gsub(paste(".*/",sep = ""), "", name)
     
     ### date
