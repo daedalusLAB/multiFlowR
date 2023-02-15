@@ -1,4 +1,4 @@
-cramerOpenPose<-function(data,v.i,v.j,orthonormal=T,save.video.csv,path.save.videos) {
+cramerOpenPose<-function(data,v.i,v.j,orthonormal=T,save.video.csv,output.folder) {
   load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/cramerOpenPoseFrame.rda")
   
   matriXY<-NULL
@@ -23,20 +23,17 @@ cramerOpenPose<-function(data,v.i,v.j,orthonormal=T,save.video.csv,path.save.vid
   
   if (save.video.csv==T) {
     
+    folder<-output.folder
+    dir.create(folder,recursive = T, showWarnings = F)
+    
+    
     unique(processedData$name)->videoNames
-    
-    processedData[processedData$name==videoNames[1],]->oneVideoProcessedData
-    
-    dir.create(path = path.save.videos,recursive = T,showWarnings = F)
-    
-    
-    
     
     for (i in 1:length(videoNames)) {
       
       processedData[processedData$name==videoNames[i],]->oneVideoProcessedData
-      csvFileName <- paste(path.save.videos,videoNames[i],".csv",sep="")
-      write.csv(x = oneVideoProcessedData, file = csvFileName, row.names = F,)
+      write.csv(x = oneVideoProcessedData, paste(folder,"/",videoNames[i],".csv",sep = ""),row.names = F)
+      
     }
     
   }
@@ -44,3 +41,6 @@ cramerOpenPose<-function(data,v.i,v.j,orthonormal=T,save.video.csv,path.save.vid
   return(processedData)
   
 }
+
+
+  

@@ -130,4 +130,4 @@ cramerOpenPose(data = example,v.i =5,orthonormal=T,save.video.csv=T,path.save.vi
 
 * `save.video.csv`: Boolean variable (`TRUE`/`FALSE`) to save or not normalized data in `csv` files; one file per video.
 
-* `path.save.videos`: The path to save selected `csv` files.
+* `output.folder`: The path to save selected `csv` files.
