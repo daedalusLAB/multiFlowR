@@ -48,7 +48,7 @@ read -e -p "Where do you want to save tidy data?" TidySavePath
 
 
 
-cd $(pwd)/videosMP4W
+cd  $videoWorkDir
 
 for f in *; do
   echo "File -> $f"
@@ -101,5 +101,5 @@ cd $rootDir
 
 Rscript dfMakerexecute.R $extraVar $rawSave $rawSavePath $clipCleaner $TidySavePath
 
-rm -r $(pwd)/videosMP4W
-rm -r $(pwd)/videosJSON
+rm -r $videoWorkDir
+rm -r $jsonWorkDir
