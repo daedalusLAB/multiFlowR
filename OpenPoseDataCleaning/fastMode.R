@@ -3,9 +3,9 @@ fast.mode<-function(fast.mode, path){
   end_time =NULL
   start_time <- Sys.time()
   if(fast.mode==TRUE){
-    read.csv(path)->data
+    read.csv(path)->dataVideos
   }else{
-    list.files(path)->videos ## video list
+    list.files(path,pattern = ".csv")->videos ## video list
     dataVideos=NULL
     start_time <- Sys.time()
     for (i in 1:length(videos)) {
@@ -16,4 +16,7 @@ fast.mode<-function(fast.mode, path){
   end_time <- Sys.time()
   time<-end_time - start_time
   print(time)
+  return(dataVideos)
 }
+
+# fast.mode(fast.mode = F,path = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawData/")->hola

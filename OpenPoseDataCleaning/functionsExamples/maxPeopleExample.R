@@ -1,7 +1,7 @@
 load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/maxPeople.rda")
 
 example<-maxPeople(path = 
-                    "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawCSV/"
+                    "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawData/"
                    ,max = 1,full.folder = T)
 
 head(example)
@@ -15,7 +15,7 @@ unique(example$name)
 
 # Only the videos which names are inside filenames.txt are taken as input.
 
-example<-maxPeople(path = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawCSV/"
+example<-maxPeople(path = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawData/"
                    ,max = 1,full.folder = F, fileNames = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/filenames.txt")
 
 

@@ -1,12 +1,17 @@
-dfMaker<-function(input.folders,save.csv=F, output.folder,return.empty=F, extra.var) {
+dfMaker<-function(input.folders,save.csv=F, output.folder,return.empty=F, extra.var,save.parquet=F) {
   
    
  input.folders<-list.dirs(input.folders, full.names=TRUE,recursive = F)
  
  
-videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.var) {
+videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.var,save.parquet) {
   
   
+  
+  if (save.parquet==TRUE) {
+    
+    ifelse(require(arrow),"arrow is alreday installed", install.packages("arrow")) 
+  }
   
   files<-list.files(input.folders, pattern="*.json", full.names=TRUE)
   
@@ -16,28 +21,39 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
   
   
   frameMaker<<-function(file, extra.var){
-    require(jsonlite)
     
-    rawData<-read_json( path = file)
-    
-    rawData<-rawData[2]
-    
-    rawData<-rawData[[1]]
-    
-    dfPoints=NULL
-    for (id in 1:length(rawData)) {
-    
-    if(length(rawData)!=0) {
-    
-    points<-data.frame(unlist(rawData[[id]]),people=id)
-    
-    dfPoints=rbind(dfPoints,points) }else{
+    if (require(arrow)==TRUE) {
+      rawData<-read_json_arrow(file,as_data_frame = T) #read file
       
-      empty<-paste(file)
+      rawData<-rawData[[2]][[1]]  #extract lists
       
+      dfPoints=NULL
+      for (id in 1:nrow(rawData)) {
+        
+        if(nrow(rawData)!=0) {
+          points<-data.frame(data=unlist(rawData[id,]),people=id)
+          dfPoints=rbind(dfPoints,points) }else{
+            empty<-paste(file)
+          }}
       
-    }}
+    }else{
+      require(jsonlite)
+      rawData<-read_json( path = file) #read file
+      
+      rawData<-rawData[2]  #extract lists
+      rawData<-rawData[[1]]  #extract lists
+      
+      dfPoints=NULL
+      for (id in 1:length(rawData)) {
+        
+        if(length(rawData)!=0) {
+          points<-data.frame(unlist(rawData[[id]]),people=id)
+          dfPoints=rbind(dfPoints,points) }else{
+            empty<-paste(file)
+          }}
+    }
     
+    ################################################################
     
     pattern<- sample(T, size=137*3, replace= T) # points triplicates
     
@@ -147,6 +163,15 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
     
   }
   
+
+  
+  if (save.parquet==TRUE) {
+    
+    folder<-output.folder
+    dir.create(folder,recursive = T)
+    write_parquet(x = out, sink = paste(folder,"/",unique(out$name),".parquet",sep = ""))
+  }
+  
   if (return.empty==T) {
     video<-list(out,emptyFrames)
     return(video)
@@ -168,7 +193,7 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
  for (i in 1:(length(input.folders))) {
   
   
-  dfVideo<-videoMaker( input.folders[i],save.csv = save.csv,output.folder = output.folder,return.empty = return.empty, extra.var = extra.var)
+  dfVideo<-videoMaker( input.folders[i],save.csv = save.csv,output.folder = output.folder,return.empty = return.empty, extra.var = extra.var,save.parquet = save.parquet)
   
   if (return.empty==F) {
     

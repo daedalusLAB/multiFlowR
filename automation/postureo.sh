@@ -43,6 +43,7 @@ read -e -p "Where do you want to save tidy data?" TidySavePath
 
 
 
+
  cp   $path/*.mp4  $videoWorkDir
 
 
@@ -58,7 +59,7 @@ done
 
  # cd /data/home/agora/openpose #uncomment to set OpenPose path 
 
-cd $OpenPosePath #Don't forget ti comment this line in case OpenPose path has been set
+cd $OpenPosePath #Don't forget to comment this line in case OpenPose path has been set
 
 for f in  $videoWorkDir/* ## change the number of "*" in case there are more subfolders
 do

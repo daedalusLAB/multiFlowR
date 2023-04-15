@@ -2,7 +2,7 @@
 
 load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/maxPeople.rda")
 
-maxPeople(path = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawCSV/", max = 1,full.folder = T)->example
+maxPeople(path = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawData/", max = 1,full.folder = T)->example
 
 
 # and corrected by xyCorrector
@@ -19,7 +19,7 @@ xyCorrector(df = example,df.full = T,set.NAs = T,fixed.point.x = 1,fixed.point.y
 load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/cramerOpenPose.rda")
 
 
-result<-cramerOpenPose(data = example,v.i = 5,orthonormal = T, save.video.csv = T,path.save.videos = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/cleanDataCSV/" )
+result<-cramerOpenPose(data = example,v.i = 5,orthonormal = T, save.video.csv = T,output.folder  = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/cleanDataCSV/" )
 
 
 head(result)

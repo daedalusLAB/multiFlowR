@@ -1,3 +1,3 @@
-2006-01-14_0600_US_KTTV-FOX_Ten_OClock_News_273-275_ID202back_then.csv
-2014-10-10_0600_US_KCAL_Entertainment_Tonight_374-380_ID933from_beginning_to_end.csv
-2015-03-26_2100_US_WEWS_Live_on_5_1221-1225_ID509later_than.csv
+2006-01-14_0600_US_KTTV-FOX_Ten_OClock_News_273-275_ID202_back_then.csv
+2014-10-10_0600_US_KCAL_Entertainment_Tonight_374-380_ID933_from_beginning_to_end.csv
+2015-03-26_2100_US_WEWS_Live_on_5_1221-1225_ID509_later_than.csv

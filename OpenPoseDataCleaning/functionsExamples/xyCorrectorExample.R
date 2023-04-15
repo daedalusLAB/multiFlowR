@@ -3,7 +3,7 @@
 
 load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/maxPeople.rda")
 
-maxPeople(path = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawCSV/", max = 1,full.folder = T)->example
+maxPeople(path = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawData/", max = 1,full.folder = T)->example
 
 
 ######################## xyCorrector ##########################################

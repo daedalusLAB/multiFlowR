@@ -43,3 +43,4 @@ xyCorrector(df = data,df.full = T,set.NAs = T,fixed.point.x = 1,fixed.point.y = 
 outPut<-cramerOpenPose(data = data,v.i = 5,orthonormal = T, save.video.csv = T,
                   output.folder = outPutFolder )
 
+

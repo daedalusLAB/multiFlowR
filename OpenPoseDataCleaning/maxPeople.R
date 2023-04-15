@@ -1,6 +1,6 @@
 maxPeople<-function(path,max,full.folder,fileNames){
   if (full.folder==T) {
-    list.files(path)->files} else{
+    list.files(path,pattern = ".csv")->files} else{
       
       read.table(file=fileNames)->files
       files[,1]->files
