@@ -1,4 +1,4 @@
-cramerOpenPose<-function(data,v.i,v.j,orthonormal=T,save.video.csv,output.folder) {
+cramerOpenPose<-function(data,v.i,v.j,orthonormal=T,save.video.csv,output.folder, save.parquet=F) {
   load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/cramerOpenPoseFrame.rda")
   
   matriXY<-NULL
@@ -38,9 +38,38 @@ cramerOpenPose<-function(data,v.i,v.j,orthonormal=T,save.video.csv,output.folder
     
   }
   
+  
+  
+  if (save.parquet==TRUE) {
+    
+    require(arrow)
+    folder<-output.folder
+    dir.create(folder,recursive = T, showWarnings = F)
+    
+    unique(processedData$name)->videoNames
+    
+    
+    for (i in 1:length(videoNames)) {
+      
+      processedData[processedData$name==videoNames[i],]->oneVideoProcessedData
+      write_parquet(x = oneVideoProcessedData, sink = paste(folder,"/",videoNames[i],".parquet",sep = ""))
+      
+      
+    }}
+    
+    
+  
+  
   return(processedData)
   
 }
 
 
   
+
+
+
+
+
+
+

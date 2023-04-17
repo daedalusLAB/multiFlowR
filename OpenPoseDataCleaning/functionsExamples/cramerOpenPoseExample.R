@@ -19,7 +19,11 @@ xyCorrector(df = example,df.full = T,set.NAs = T,fixed.point.x = 1,fixed.point.y
 load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/cramerOpenPose.rda")
 
 
-result<-cramerOpenPose(data = example,v.i = 5,orthonormal = T, save.video.csv = T,output.folder  = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/cleanDataCSV/" )
+result<-cramerOpenPose(data = example,v.i = 5,
+                       orthonormal = T, 
+                       save.video.csv = T,
+                       output.folder  = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/cleanDataCSV/",
+                       save.parquet = T)
 
 
 head(result)
