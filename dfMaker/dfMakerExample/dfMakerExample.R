@@ -47,3 +47,13 @@ str(example)
 dfMaker(input.folders = "~/multiFlowR/dfMaker/dfMakerExample/exampleVideos/",
         return.empty = F,
         extra.var = F)
+
+
+
+
+###### It is now possible to work with pose_keypoints only################
+
+dfMaker(input.folders = "~/multiFlowR/dfMaker/dfMakerExample/exampleVideosOnlyPose/",
+        return.empty = F,
+        extra.var = T,
+        type.point = "pose")

@@ -1,4 +1,4 @@
-dfMaker<-function(input.folders,save.csv=F, output.folder,return.empty=F, extra.var,save.parquet=F) {
+dfMaker<-function(input.folders,save.csv=F, output.folder,return.empty=F, extra.var,save.parquet=F, type.point="full") {
   
    
  input.folders<-list.dirs(input.folders, full.names=TRUE,recursive = F)
@@ -53,11 +53,20 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
           }}
     }
     
-    ################################################################
+    ####################### Only pose vs. full #########################################
     
-    pattern<- sample(T, size=137*3, replace= T) # points triplicates
+    if (type.point=="full") {
+      pattern<- sample(T, size=137*3, replace= T) # points triplicates
+      points<-c(0:24,0:69,0:20,0:20)
+    }
     
-    
+    if (type.point=="pose") {
+      pattern<- sample(T, size=25*3, replace= T) # points triplicates
+      points<-c(0:24)
+    }
+  
+ #####################################################################   
+      
     pattern<-c(F,pattern)
     
     if(!is.null(dfPoints)){
@@ -92,7 +101,8 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
     
     groups <- c("x", "y", "c") # the variables of the final df
     
-    
+
+#############Extra variables###############        
   if (extra.var==TRUE) {
     
     ### words
@@ -111,11 +121,12 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
     date<-as.Date(gsub(paste("_.*",sep = ""), "", date))
     
     
+    
     if(!is.null(dfPoints)){
       pointsDF<-data.frame(split(dfPoints[,1], f = groups), 
                            people=dfPoints$people[triplet],
                            typePoint=  type[triplet],
-                           point= c(0:24,0:69,0:20,0:20),
+                           point= points,
                            words=words,
                            frame=frame,
                            name=name,
@@ -129,7 +140,7 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
       pointsDF<-data.frame(split(dfPoints[,1], f = groups), 
                            people=dfPoints$people[triplet],
                            typePoint=  type[triplet],
-                           point= c(0:24,0:69,0:20,0:20),
+                           point= points,
                            frame=frame,
                            name=name) # split in 3 columns 
       return(pointsDF)
