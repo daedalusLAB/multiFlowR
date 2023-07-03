@@ -28,15 +28,16 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
       rawData<-rawData[[2]][[1]]  #extract lists
       
       dfPoints=NULL
-      for (id in 1:nrow(rawData)) {
-        
-        if(nrow(rawData)!=0) {
-          points<-data.frame(data=unlist(rawData[id,]),people=id)
-          dfPoints=rbind(dfPoints,points) }else{
-            empty<-paste(file)
-          }}
       
-    }else{
+      
+      if(sum(capture.output(rawData)!="<unspecified> [0]")!=0) {
+          for (id in 1:nrow(rawData)) {
+            points<-data.frame(data=unlist(rawData[id,]),people=id)
+            dfPoints=rbind(dfPoints,points) } 
+         }else{
+            empty<-paste(file)
+          }
+      }else{
       require(jsonlite)
       rawData<-read_json( path = file) #read file
       
