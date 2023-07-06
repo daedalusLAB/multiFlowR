@@ -13,7 +13,7 @@ Hope you enjoy! :smiley::smiley::smiley:
 
 
 
- ![](OpenPoseDataCleaning/functions/Examples/dfmakerInOut.png)
+ ![dfMaker input vs. output](OpenPoseDataCleaning/functions/Examples/dfmakerInOut.png)
 
 
 
