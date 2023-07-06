@@ -107,7 +107,7 @@ The [Cramer's rule] (https://en.wikipedia.org/wiki/Cramer%27s_rule) allows us to
 
 The aim of `CramerOpenPose` is to apply Cramer's rule to all frames, generating a new value for x e y (`nx`,`ny`) where, regardless of the distance to the camera or the position of the person, even if he/she changes position during the video, the distance between the chest and the left shoulder is 1.
 
- ![Example of a frame treated with xyCorrector](functionsExamples/cramerOpenPoseExample.png)
+ ![Example of a frame treated with cramerOpenPose](functionsExamples/cramerOpenPoseExample.png)
 
 
 | :warning: WARNING                                                                                                                                 |
