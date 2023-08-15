@@ -1,4 +1,3 @@
-# `dfMaker`
 
 ![](logo_dfMaker.png)
 
