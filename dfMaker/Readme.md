@@ -4,14 +4,10 @@
 ![](table_dfMaker.jpg)
 
 
-`dfmaker` is a function that allows `OpenPose' to structure massive amounts of data and also provides the ability to obtain csv or parquet files for further analysis.
-| :warning: WARNING                                                                                                                                       |
-|:-----------------------------------------------------------------------|
-| `extra.var=TRUE` requieres the next strutre on names to work *2020-02-21_2100_US_CNN_The_Lead_With_Jake_Tapper_1244-1250_subsequently.mp4*
 
-**date_name_cut-Time_expression-searched.mp4**
- |
+## What is dfMaker?
 
+`dfmaker` is a function that allows `OpenPose' to structure massive amounts of data and also provides the ability to obtain csv or parquet files for further analysis
 
 
 ## Function atributes
@@ -40,7 +36,12 @@ dfMaker(input.folders = "/home/user/outPutOpenPoseFolder/",
 
 
 
+| :warning: WARNING                                                                                                                                       |
+|:-----------------------------------------------------------------------|
+| `extra.var=TRUE` requieres the next strutre on names to work *2020-02-21_2100_US_CNN_The_Lead_With_Jake_Tapper_1244-1250_subsequently.mp4*
 
+**date_name_cut-Time_expression-searched.mp4**
+ |
 
 
 ## ¿Why Parquet?
