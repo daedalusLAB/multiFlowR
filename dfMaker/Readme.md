@@ -12,9 +12,7 @@
 **date_name_cut-Time_expression-searched.mp4**
  |
 
-## Documentation
 
-Reference manual: [dfMaker.pdf (PDF)](docs/dfMaker.pdf) Lang: :es:
 
 ## Function atributes
 
@@ -41,6 +39,10 @@ dfMaker(input.folders = "/home/user/outPutOpenPoseFolder/",
 -   `type.point`: If you only want the 25 pose_keypoints `type.point = "pose"`.
 
 
+
+
+
+
 ## ¿Why Parquet?
 
  [.parquet](https://github.com/apache/parquet-format) files are about 10 times smaller than .csv files, making it a great format for storing large amounts of data for further analysis.
@@ -61,5 +63,12 @@ At the moment you can work with all points or only with pose_keypoints:
 * `type.point = "full` full set (pose, face, handL and handR) 
 
 * `type.point = "pose"` pose_keypoints only.
+
+## Reference maual
+
+[:book: dfMaker.pdf (PDF)](docs/dfMaker.pdf) Lang: :es:
+
+
+
 
  Let's go to Open big data together! :ghost:
