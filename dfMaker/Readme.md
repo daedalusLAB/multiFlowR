@@ -2,6 +2,9 @@
 
 ![](logo_dfMaker.png)
 
+![](table_dfMaker.png)
+
+
 `dfmaker` is a function that allows `OpenPose' to structure massive amounts of data and also provides the ability to obtain csv or parquet files for further analysis.
 | :warning: WARNING                                                                                                                                       |
 |:-----------------------------------------------------------------------|
