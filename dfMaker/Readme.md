@@ -62,7 +62,7 @@ The `type.point` attribute has been created to allow the use of the OpenPose [`p
 
 At the moment you can work with all points or only with pose_keypoints:
 
-* `type.point = "full` full set (pose, face, handL and handR) 
+* `type.point = "full"` full set (pose, face, handL and handR) 
 
 * `type.point = "pose"` pose_keypoints only.
 

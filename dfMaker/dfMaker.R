@@ -20,10 +20,10 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
  
   
   
-  frameMaker<<-function(file, extra.var){
+  frameMaker<<-function(file_name, extra.var){
     
     if (require(arrow)==TRUE) {
-      rawData<-read_json_arrow(file,as_data_frame = T) #read file
+      rawData<-read_json_arrow(file_name,as_data_frame = T) #read file
       
       rawData<-rawData[[2]][[1]]  #extract lists
       
@@ -35,11 +35,11 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
             points<-data.frame(data=unlist(rawData[id,]),people=id)
             dfPoints=rbind(dfPoints,points) } 
          }else{
-            empty<-paste(file)
+            empty<-paste(file_name)
           }
       }else{
       require(jsonlite)
-      rawData<-read_json( path = file) #read file
+      rawData<-read_json( path = file_name) #read file
       
       rawData<-rawData[2]  #extract lists
       rawData<-rawData[[1]]  #extract lists
@@ -50,7 +50,7 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
         if(length(rawData)!=0) {
           points<-data.frame(unlist(rawData[[id]]),people=id)
           dfPoints=rbind(dfPoints,points) }else{
-            empty<-paste(file)
+            empty<-paste(file_name)
           }}
     }
     
@@ -86,13 +86,13 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
 
     ### frame
     
-    regmatches(file,regexec( "[0-9]{12}", file))->frame # frame has 12 digits
+    regmatches(file_name,regexec( "[0-9]{12}", file_name))->frame # frame has 12 digits
     frame<-as.numeric(frame[[1]])
     
     
     ### name
     
-    name<-gsub(paste("_[0-9]{12}.*", sep = ""),"", file)
+    name<-gsub(paste("_[0-9]{12}.*", sep = ""),"", file_name)
     name<-gsub(paste(".*/",sep = ""), "", name)
     
     
@@ -108,17 +108,17 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
     
     ### words
     
-    words<-gsub("_[0-9]{12}.*", "", file)
+    words<-gsub("_[0-9]{12}.*", "", file_name)
     words<-gsub(".*[0-9]_", "", words)
     
     ### name
     
-    name<-gsub(paste("_[0-9]{12}.*", sep = ""),"", file)
+    name<-gsub(paste("_[0-9]{12}.*", sep = ""),"", file_name)
     name<-gsub(paste(".*/",sep = ""), "", name)
     
     ### date
     
-    date<-gsub(paste(".*/",sep = ""), "", file)
+    date<-gsub(paste(".*/",sep = ""), "", file_name)
     date<-as.Date(gsub(paste("_.*",sep = ""), "", date))
     
     
@@ -168,9 +168,9 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
    
   }
   
-  if (save.csv==T) {
+  if (save.csv==TRUE) {
     folder<-output.folder
-    dir.create(folder,recursive = T)
+    dir.create(folder,recursive = TRUE,showWarnings = FALSE)
     write.csv(x = out, paste(folder,"/",unique(out$name),".csv",sep = ""),row.names = F)
     
   }
@@ -180,7 +180,7 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
   if (save.parquet==TRUE) {
     
     folder<-output.folder
-    dir.create(folder,recursive = T)
+    dir.create(folder,recursive = TRUE,showWarnings = FALSE)
     write_parquet(x = out, sink = paste(folder,"/",unique(out$name),".parquet",sep = ""))
   }
   
@@ -223,4 +223,5 @@ videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.
  
  return(result)
 }
+
 

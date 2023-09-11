@@ -1,7 +1,7 @@
 
 load("~/multiFlowR/dfMaker/functionsRData/dfMaker.rda")
 
-example<-dfMaker(input.folders = "~/multiFlowR/dfMaker/dfMakerExample/exampleVideos/",
+example<-dfMaker(input.folders = "~/multiFlowR/dfMaker/dfMakerExample/exampleVideos",
         save.csv = T,
         output.folder = "~/multiFlowR/OpenPoseDataCleaning/functionsExamples/rawData",
         return.empty = T,
@@ -10,7 +10,21 @@ example<-dfMaker(input.folders = "~/multiFlowR/dfMaker/dfMakerExample/exampleVid
 
 str(example)
 
-example[2]
+
+example2<-as.data.frame(example[1])
+
+
+
+load("~/multiFlowR/OpenPoseDataCleaning/functionsRData/fast.mode.rda")
+
+
+reload_example<-fast.mode(path = "OpenPoseDataCleaning/functionsExamples/rawData/",fast.mode = FALSE)
+
+
+library(dplyr)
+
+
+all_equal(example2,reload_example)
 
 ###############################################################################3
 # Warning!!! The output.folder is inside OpenPoseDataCleaning to use data in cleaning functions #
