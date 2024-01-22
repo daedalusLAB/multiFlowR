@@ -66,12 +66,11 @@ dfMaker <- function(input.folder, config.path) {
       datetime_str <- sub("^(\\d{4}-\\d{2}-\\d{2})_(\\d{4})_.*$", "\\1 \\2", metadata)
       datetime <- as.POSIXct(datetime_str, format = "%Y-%m-%d %H%M", tz = timezone)
     }
-    exp_search <- ifelse(config$extract_exp_search, gsub("_[0-9]{12}.*", "", gsub(".*[0-9]_", "", metadata)), NA)
+    exp_search <- ifelse(config$extract_exp_search, gsub(".*[0-9]_(.*)_\\d{12}_keypoints\\.json$", "\\1", metadata), NA)
     country_code <- ifelse(config$extract_country_code, sub(".*?_(\\w{2})_.*", "\\1", metadata), NA)
     network_code <- ifelse(config$extract_network_code, sub("^.*_\\d{4}_\\w{2}_([^_]+)_.*$", "\\1", metadata), NA)
     program_name <- ifelse(config$extract_program_name, sub("^.*_\\d{4}_\\w{2}_[^_]+_(.*?)_\\d+-\\d+.*$", "\\1", metadata), NA)
     time_range <- ifelse(config$extract_time_range, sub("^.*_(\\d+-\\d+)_.*$", "\\1", metadata), NA)
-    
     # Process keypoints data and compile into data frames
     for (i in 1:nrow(rawData)) {
       for (j in 1:ncol(rawData)) {
@@ -81,13 +80,13 @@ dfMaker <- function(input.folder, config.path) {
         
         # Combine individual keypoints data into a data frame with metadata
         frame_data_list <- list(matrix_data = matrix_data,
-                                typepoint = gsub("_2d", " ", colnames(rawData[j])),
+                                type_point = gsub("_2d", " ", colnames(rawData[j])),
                                 people_id = i,
                                 point = c(0:(nrow(matrix_data) - 1)),
                                 id = metadata, 
                                 frame = frame)
         
-        # Agrega dinámicamente solo las variables que no son NA
+        # Aggregate dynamic only no NA variables
         if (!is.na(exp_search)) frame_data_list$exp_search <- exp_search
         if (!is.na(datetime)) frame_data_list$datetime <- datetime
         if (!is.na(country_code)) frame_data_list$country_code <- country_code
@@ -109,3 +108,5 @@ dfMaker <- function(input.folder, config.path) {
 
 
 data<-dfMaker(input.folder= "dfMaker/dfMakerExample/exampleVideos/2006-01-14_0600_US_KTTV-FOX_Ten_OClock_News_273-275_ID202_back_then/",config.path = "var_config.json")
+
+write.csv(x = data,file = "new_dfMaker_example.csv",row.names = FALSE)
