@@ -12,9 +12,7 @@ Hope you enjoy! :smiley::smiley::smiley:
 ## dfMaker
 
 
-
- ![dfMaker input vs. output](OpenPoseDataCleaning/functionsExamples/dfmakerInOut.png)
-
+New version inside this brand
 
 
 `dfMaker` is a function that structures data from [`OpenPose`](https://github.com/CMU-Perceptual-Computing-Lab/openpose) computer vision software for the study of human body language. It also allows to integrate data from filenames if the UCLA tag structure is set to `extra.var= TRUE` (date and searched expression).
