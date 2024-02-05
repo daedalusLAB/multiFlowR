@@ -1,227 +1,145 @@
-dfMaker<-function(input.folders,save.csv=F, output.folder,return.empty=F, extra.var,save.parquet=F, type.point="full") {
+dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=NULL, no_save=FALSE) {
+  # Load the required library
+  library(arrow)
   
-   
- input.folders<-list.dirs(input.folders, full.names=TRUE,recursive = F)
- 
- 
-videoMaker<<- function(input.folders,output.folder,save.csv,return.empty, extra.var,save.parquet) {
+  # Initialize variables to store metadata and final data
+  all_data <- list()
+  default_config <- list(
+    extract_datetime = FALSE,
+    extract_time = FALSE,
+    extract_exp_search = FALSE,
+    extract_country_code = FALSE,
+    extract_network_code = FALSE,
+    extract_program_name = FALSE,
+    extract_time_range = FALSE,
+    timezone = "America/Los_Angeles"
+  )
   
-  
-  
-  if (save.parquet==TRUE) {
-    
-    ifelse(require(arrow),"arrow is alreday installed", install.packages("arrow")) 
+  # Check if config path is provided and read the configuration; use default if not provided
+  if (missing(config.path)) {
+    config <- default_config
+  } else {
+    config <- read_json_arrow(config.path, as_data_frame = TRUE) |> as.list()
   }
   
-  files<-list.files(input.folders, pattern="*.json", full.names=TRUE)
+
+  # List all JSON files in the input directory
+  files <- list.files(input.folder, pattern = "*.json", full.names = TRUE)
   
-  out=NULL
-  emptyFrames=NULL
- 
+  # Control variable to ensure message is printed only once
+  message_printed <- FALSE  
   
-  
-  frameMaker<<-function(file_name, extra.var){
+  # Loop through each file to process
+  for (frame_file in files) {
+    # Read the JSON file and extract the keypoints data
+    rawData <- read_json_arrow(frame_file, as_data_frame = TRUE)[[2]][[1]][2:5]
     
-    if (require(arrow)==TRUE) {
-      rawData<-read_json_arrow(file_name,as_data_frame = T) #read file
-      
-      rawData<-rawData[[2]][[1]]  #extract lists
-      
-      dfPoints=NULL
-      
-      
-      if(sum(capture.output(rawData)!="<unspecified> [0]")!=0) {
-          for (id in 1:nrow(rawData)) {
-            points<-data.frame(data=unlist(rawData[id,]),people=id)
-            dfPoints=rbind(dfPoints,points) } 
-         }else{
-            empty<-paste(file_name)
-          }
-      }else{
-      require(jsonlite)
-      rawData<-read_json( path = file_name) #read file
-      
-      rawData<-rawData[2]  #extract lists
-      rawData<-rawData[[1]]  #extract lists
-      
-      dfPoints=NULL
-      for (id in 1:length(rawData)) {
+    total_points <- sum(sapply(rawData, function(x) length(unlist(x)) / 3))
+    model_type <- ifelse(total_points > 25, "137_points", "25_points")
+    check_points <- if (model_type == "137_points") c(25, 70, 21, 21) else c(25, rep(0, 3))
+
+    if (!message_printed) {  # Check if the message has not been printed yet
+      if (model_type == "25_points") {
+        print("model b_25")
+      } else {
+        print("regular model")
+      }
+      message_printed <- TRUE  # Update the control variable
+    }
+
+    # Define the expected number of points for each type of keypoints
+    check_points <- c(25, 70, 21, 21)
+    
+    # Metadata extraction based on the configuration
+    metadata <- gsub(".*[\\\\/]", "", frame_file)
+    frame <- as.numeric(regmatches(metadata, regexec("[0-9]{12}", metadata)))
+    id<-gsub("_\\d{12}_keypoints.json", "", metadata)
+    
+    # Extract additional metadata if enabled in configuration
+    
+    if (config$extract_datetime) {
+      timezone <- ifelse(is.null(config$timezone), default_config$timezone, config$timezone)
+      datetime_str <- sub("^(\\d{4}-\\d{2}-\\d{2})_(\\d{4})_.*$", "\\1 \\2", metadata)
+      datetime <- as.POSIXct(datetime_str, format = "%Y-%m-%d %H%M", tz = timezone)
+    }else{
+      datetime<-NA
+    }
+    exp_search <- ifelse(config$extract_exp_search, gsub(".*[0-9]_(.*)_\\d{12}_keypoints\\.json$", "\\1", metadata), NA)
+    country_code <- ifelse(config$extract_country_code, sub(".*?_(\\w{2})_.*", "\\1", metadata), NA)
+    network_code <- ifelse(config$extract_network_code, sub("^.*_\\d{4}_\\w{2}_([^_]+)_.*$", "\\1", metadata), NA)
+    program_name <- ifelse(config$extract_program_name, sub("^.*_\\d{4}_\\w{2}_[^_]+_(.*?)_\\d+-\\d+.*$", "\\1", metadata), NA)
+    time_range <- ifelse(config$extract_time_range, sub("^.*_(\\d+-\\d+)_.*$", "\\1", metadata), NA)
+    # Process keypoints data and compile into data frames
+    for (i in 1:nrow(rawData)) {
+      for (j in 1:ncol(rawData)) {
+        matrix_data <- matrix(unlist(rawData[i, j]), ncol = 3, nrow = check_points[j], byrow = TRUE)
+        matrix_data <- apply(matrix_data, 2, as.numeric)
         
-        if(length(rawData)!=0) {
-          points<-data.frame(unlist(rawData[[id]]),people=id)
-          dfPoints=rbind(dfPoints,points) }else{
-            empty<-paste(file_name)
-          }}
+        # Combine individual keypoints data into a data frame with metadata
+        frame_data_list <- list(matrix_data = matrix_data,
+                                type_point = gsub("_2d", " ", colnames(rawData[j])),
+                                people_id = i,
+                                point = c(0:(nrow(matrix_data) - 1)),
+                                id = id, 
+                                frame = frame)
+        
+        # Aggregate dynamic only no NA variables
+        if (!is.na(exp_search)) frame_data_list$exp_search <- exp_search
+        if (!is.na(datetime)) frame_data_list$datetime <- datetime
+        if (!is.na(country_code)) frame_data_list$country_code <- country_code
+        if (!is.na(network_code)) frame_data_list$network_code <- network_code
+        if (!is.na(program_name)) frame_data_list$program_name <- program_name
+        if (!is.na(time_range)) frame_data_list$time_range <- time_range
+        df <- data.frame(frame_data_list)
+        all_data[[length(all_data) + 1]] <- df
+      }
     }
-    
-    ####################### Only pose vs. full #########################################
-    
-    if (type.point=="full") {
-      pattern<- sample(T, size=137*3, replace= T) # points triplicates
-      points<-c(0:24,0:69,0:20,0:20)
-    }
-    
-    if (type.point=="pose") {
-      pattern<- sample(T, size=25*3, replace= T) # points triplicates
-      points<-c(0:24)
+  }
+  
+  # Combine all the individual frames into one data frame
+  final_data <- do.call(rbind, all_data)
+  colnames(final_data)[1:3] <- c("x", "y", "c")
+  final_data[c("x","y")][final_data[c("x","y")] == 0] <- NA #Zeros as NAs
+  
+  if (!no_save) {
+    # Use processed_id for auto-naming if output.file is NULL or empty
+    if (is.null(output.file) || output.file == "") {
+      if (length(unique(final_data$id))!=1) {
+        stop(paste("Error: Multiple unique IDs found:", paste(unique(final_data$id), collapse=", ")))
+      }else{
+        if (!is.null(output.path)) {
+          # add last "/" 
+          if (!grepl("/$", output.path)) {
+            output.path <- paste0(output.path, "/")
+          }
+          dir.create(output.path,recursive = TRUE,showWarnings = FALSE)
+          output.file <- paste0(output.path,unique(final_data$id), ".parquet")
+        }else{
+        dir.create("./df_outputs/",recursive = TRUE,showWarnings = FALSE)
+        output.file <- paste0("./df_outputs/",unique(final_data$id), ".parquet")
+        }
+      }
     }
   
- #####################################################################   
-      
-    pattern<-c(F,pattern)
     
-    if(!is.null(dfPoints)){
-      pattern<-rep(pattern, times=max(dfPoints$people))
-    }  
-    
-    
-    
-    dfPoints<-dfPoints[pattern,]
-    
-    ### type
-    
-    type<-rownames(dfPoints)
-    type<-gsub("_2d[0-9]*", "", type)
-    
-
-    ### frame
-    
-    regmatches(file_name,regexec( "[0-9]{12}", file_name))->frame # frame has 12 digits
-    frame<-as.numeric(frame[[1]])
-    
-    
-    ### name
-    
-    name<-gsub(paste("_[0-9]{12}.*", sep = ""),"", file_name)
-    name<-gsub(paste(".*/",sep = ""), "", name)
-    
-    
-    ###
-    triplet<-c(T,F,F)
-    ###    
-    
-    groups <- c("x", "y", "c") # the variables of the final df
-    
-
-#############Extra variables###############        
-  if (extra.var==TRUE) {
-    
-    ### words
-    
-    words<-gsub("_[0-9]{12}.*", "", file_name)
-    words<-gsub(".*[0-9]_", "", words)
-    
-    ### name
-    
-    name<-gsub(paste("_[0-9]{12}.*", sep = ""),"", file_name)
-    name<-gsub(paste(".*/",sep = ""), "", name)
-    
-    ### date
-    
-    date<-gsub(paste(".*/",sep = ""), "", file_name)
-    date<-as.Date(gsub(paste("_.*",sep = ""), "", date))
-    
-    
-    
-    if(!is.null(dfPoints)){
-      pointsDF<-data.frame(split(dfPoints[,1], f = groups), 
-                           people=dfPoints$people[triplet],
-                           typePoint=  type[triplet],
-                           point= points,
-                           words=words,
-                           frame=frame,
-                           name=name,
-                           date=date) # split in 3 columns 
-      return(pointsDF)
-    }else{
-      return(empty)
+    # Determine the output format based on the file extension
+    if (!is.null(output.file)) {
+      file_ext <- tools::file_ext(output.file)
+      if (file_ext == "csv") {
+        write.csv(final_data, output.file, row.names = FALSE)
+      } else if (file_ext == "parquet") {
+        arrow::write_parquet(final_data, sink = output.file)
+      } else {
+        warning("Unsupported file extension. Returning data frame.")
+      }
     }
-  }else{
-    if(!is.null(dfPoints)){
-      pointsDF<-data.frame(split(dfPoints[,1], f = groups), 
-                           people=dfPoints$people[triplet],
-                           typePoint=  type[triplet],
-                           point= points,
-                           frame=frame,
-                           name=name) # split in 3 columns 
-      return(pointsDF)
-    }else{
-     return(empty)
-    }}
-  
-    
   }
   
   
-  for (i in 1:length(files)){
-    
-    c <- data.frame(frameMaker(files[i],extra.var = extra.var))
-    
-    if (length(c)!=1) {
-       out=rbind(out,c)
-    }else{
-      
-      emptyFrames=rbind(emptyFrames,c)
-    }
-    
-    
-   
-  }
   
-  if (save.csv==TRUE) {
-    folder<-output.folder
-    dir.create(folder,recursive = TRUE,showWarnings = FALSE)
-    write.csv(x = out, paste(folder,"/",unique(out$name),".csv",sep = ""),row.names = F)
-    
-  }
-  
-
-  
-  if (save.parquet==TRUE) {
-    
-    folder<-output.folder
-    dir.create(folder,recursive = TRUE,showWarnings = FALSE)
-    write_parquet(x = out, sink = paste(folder,"/",unique(out$name),".parquet",sep = ""))
-  }
-  
-  if (return.empty==T) {
-    video<-list(out,emptyFrames)
-    return(video)
-  }else{
-    return(out)
-  }
-    
-
-  
-
+  return(final_data)
 }
 
- 
- 
- result=NULL
- dFinal<-NULL
- totalEmpty<-NULL
 
- for (i in 1:(length(input.folders))) {
-  
-  
-  dfVideo<-videoMaker( input.folders[i],save.csv = save.csv,output.folder = output.folder,return.empty = return.empty, extra.var = extra.var,save.parquet = save.parquet)
-  
-  if (return.empty==F) {
-    
-    result=rbind(result,dfVideo)
-  }else{
-    
-           dFinal=rbind(dFinal,dfVideo[[1]])
-           totalEmpty=rbind(totalEmpty,dfVideo[[2]])
-           result<-list(dFinal,totalEmpty)
-
-  }
-
-
-}
- 
- return(result)
-}
-
+save(dfMaker,file="dfMaker/functionsRData/dfMaker.rda")
 
