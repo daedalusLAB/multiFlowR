@@ -33,10 +33,11 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
   for (frame_file in files) {
     # Read the JSON file and extract the keypoints data
     rawData <- read_json_arrow(frame_file, as_data_frame = TRUE)[[2]][[1]][2:5]
-    
     total_points <- sum(sapply(rawData, function(x) length(unlist(x)) / 3))
+    # Define the expected number of points for each type of keypoints
     model_type <- ifelse(total_points > 25, "137_points", "25_points")
-    check_points <- if (model_type == "137_points") c(25, 70, 21, 21) else c(25, rep(0, 3))
+    rawData<- if (model_type == "25_points") rawData[1] else rawData
+    check_points <- if (model_type == "137_points") c(25, 70, 21, 21) else c(25)
 
     if (!message_printed) {  # Check if the message has not been printed yet
       if (model_type == "25_points") {
@@ -47,9 +48,6 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
       message_printed <- TRUE  # Update the control variable
     }
 
-    # Define the expected number of points for each type of keypoints
-    check_points <- c(25, 70, 21, 21)
-    
     # Metadata extraction based on the configuration
     metadata <- gsub(".*[\\\\/]", "", frame_file)
     frame <- as.numeric(regmatches(metadata, regexec("[0-9]{12}", metadata)))
@@ -141,5 +139,6 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
 }
 
 
-save(dfMaker,file="dfMaker/functionsRData/dfMaker.rda")
+# save new version
+# save(dfMaker,file="dfMaker/functionsRData/dfMaker.rda")
 
