@@ -29,10 +29,22 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
   # Control variable to ensure message is printed only once
   message_printed <- FALSE  
   
+  # Función para determinar si la lista 'people' está vacía o no
+  is_lista_vacia <- function(objeto) {
+    return(length(objeto$people) == 0)
+  }
+  
+  archived <- list()
+  
+  
   # Loop through each file to process
   for (frame_file in files) {
+    
     # Read the JSON file and extract the keypoints data
     rawData <- read_json_arrow(frame_file, as_data_frame = TRUE)[[2]][[1]][2:5]
+  
+    if (sum(capture.output(rawData)!="<unspecified> [4]")!=0) {
+      
     total_points <- sum(sapply(rawData, function(x) length(unlist(x)) / 3))
     # Define the expected number of points for each type of keypoints
     model_type <- ifelse(total_points > 25, "137_points", "25_points")
@@ -75,7 +87,7 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
         
         # Combine individual keypoints data into a data frame with metadata
         frame_data_list <- list(matrix_data = matrix_data,
-                                type_point = gsub("_2d", " ", colnames(rawData[j])),
+                                type_point = gsub("_2d", "", colnames(rawData[j])),
                                 people_id = i,
                                 point = c(0:(nrow(matrix_data) - 1)),
                                 id = id, 
@@ -92,8 +104,17 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
         all_data[[length(all_data) + 1]] <- df
       }
     }
+    }  else {
+      # If rawData is empty, print a message indicating it
+      cat("Archivo:", basename(frame_file), "\n")
+      cat("Lista vacía\n\n")
+      archived[length(archived) + 1] <- frame_file
+    }
+    
+    cat("\n")  # Separador entre archivos
+    
+    print(paste0("The frame ", frame, " has been read"))
   }
-  
   # Combine all the individual frames into one data frame
   final_data <- do.call(rbind, all_data)
   colnames(final_data)[1:3] <- c("x", "y", "c")
@@ -133,12 +154,12 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
     }
   }
   
-  
+ 
   
   return(final_data)
 }
 
 
 # save new version
-# save(dfMaker,file="dfMaker/functionsRData/dfMaker.rda")
+save(dfMaker,file="dfMaker/functionsRData/dfMaker.rda")
 
