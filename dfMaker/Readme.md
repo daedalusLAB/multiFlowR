@@ -15,6 +15,8 @@
 - [Functionality](#functionality)
 - [Output](#output)
 - [Algebraic Definition of M_{i,j} Matrix](#algebraic-definition-of-m_ij-matrix)
+- [Coordinate Normalization and Y-Axis Inversion](#coordinate-normalization-and-y-axis-inversion)
+- [Applying Cramer's Rule for Coordinate Transformation](#applying-cramers-rule-for-coordinate-transformation)
 - [Collaboration and Contributions](#collaboration-and-contributions)
   - [Reporting Issues or Asking Questions](#reporting-issues-or-asking-questions)
 
@@ -151,6 +153,57 @@ This tool facilitates the detailed analysis of human poses, movements, and inter
 ![](./images/matrix_structure.png)
 
 
+
+## Coordinate Normalization and Y-Axis Inversion
+
+This section explains the process of normalizing keypoints coordinates obtained from computer vision software, ensuring the data aligns with a mathematical coordinate system. Given the nature of computer vision data, where the origin often differs from traditional Cartesian systems, we introduce a method to normalize and adjust the orientation of keypoints data.
+
+### Normalization
+
+Normalization involves scaling the coordinates so that distances between keypoints (e.g., from the chest to the left shoulder) are adjusted to a defined scale. This process utilizes a scaling matrix, \(S = \left(\begin{array}{cc} s_x & 0 \\ 0 & s_x \end{array}\right)\), where \(s_x\) is the scaling factor derived from the distance between specific keypoints.
+
+### Y-Axis Inversion
+
+Due to the nature of image data, where the y-axis might be inverted relative to traditional mathematical orientations, we apply an inversion transformation. This is crucial for aligning the keypoints data with standard coordinate systems used in mathematical and physical models.
+
+The inversion is mathematically represented by the transformation of a vector `v.i`, to `v.j`, where `v.j <- v.i[2:1]*-1`. This operation effectively inverts the y-axis, ensuring that the data representation is consistent with expected mathematical conventions.
+
+This approach ensures that the processed keypoints data is ready for further analysis, modeling, or any other application requiring standardized coordinate systems.
+
+
+## Applying Cramer's Rule for Coordinate Transformation
+
+Cramer's Rule offers a systematic way to solve systems of linear equations that arise during the normalization and transformation of keypoints coordinates from computer vision outputs. This method is particularly useful for calculating the transformation matrix coefficients when we need to adjust the coordinate system based on keypoints, such as normalizing distances or inverting axes.
+
+### Overview of Cramer's Rule
+
+Cramer's Rule is a theorem in linear algebra that provides the solution to a system of linear equations with as many equations as unknowns, given that the system's matrix determinant is non-zero. It is especially handy for calculating transformations involving scaling and rotation where the equations are linear.
+
+### Transformation Matrix Calculation
+
+To apply Cramer's Rule for our purpose of coordinate normalization and Y-axis inversion, consider a system where the transformations are linear and can be represented by equations relating original keypoints to their transformed counterparts. For a transformation involving normalization based on the distance between specific keypoints (like the chest and shoulder) and inversion of the Y-axis, the system of equations can be represented as follows:
+
+\[ Ax = b \]
+
+Where \(A\) is the matrix of coefficients derived from the original keypoints positions, \(x\) is the vector of variables representing the transformed coordinates, and \(b\) is the vector of outcomes that aligns with the desired transformation.
+
+For a 2D transformation involving scaling and Y-axis inversion, the matrix \(A\) and vector \(b\) can be constructed based on the scaling factor \(s_x\) and the nature of Y-axis inversion. Specifically, \(s_x\) can be determined as \(1/l_{shoulder}\) for normalization, and Y-axis inversion can be applied by adjusting the sign in the transformation equations.
+
+### Example
+
+Given a scaling factor \(s_x\) and a point \(P(x, y)\) to be transformed to \(P'(x', y')\), the equations can be formulated as:
+
+1. \(x' = s_x \cdot x\)
+2. \(y' = -s_x \cdot y\)
+
+Using Cramer's Rule, we solve for \(x'\) and \(y'\) by replacing the respective columns in \(A\) with \(b\), calculating the determinants, and then dividing by the determinant of \(A\). This process is repeated for each coordinate to find their new values in the transformed space.
+
+### Integration with Computer Vision Data
+
+When working with keypoints data from computer vision software like OpenPose, this approach allows for precise adjustment of the coordinate system to fit analytical or visualization needs. By applying transformations derived through Cramer's Rule, data scientists and researchers can ensure that their keypoints data is properly scaled and oriented, facilitating more accurate analysis and interpretation of human poses and movements.
+
+
+
 ## Collaboration and Contributions
 
 Contributions to improve `dfMaker` or extend its functionalities are welcome. To contribute:
@@ -159,7 +212,7 @@ Contributions to improve `dfMaker` or extend its functionalities are welcome. To
 2. Clone your fork and create a new branch for your feature or fix.
 3. Make changes and test.
 4. Submit a pull request with a comprehensive description of changes.
-
+5. Any technical question: brian.herreno@um.es ;)
 
 ### Reporting Issues or Asking Questions
 

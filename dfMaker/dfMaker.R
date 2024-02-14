@@ -84,12 +84,44 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
       for (j in 1:ncol(rawData)) {
         matrix_data <- matrix(unlist(rawData[i, j]), ncol = 3, nrow = check_points[j], byrow = TRUE)
         matrix_data <- apply(matrix_data, 2, as.numeric)
+        matrix_data[,1:2][matrix_data[,1:2] == 0] <- NA #Zeros as NAs
         
+        # Crear el vector origen cuando j=1
+        if (j == 1) {
+          origen <- matrix_data[2, 1:2] # Extraer la segunda fila y las primeras dos columnas
+          v.i<- c(matrix_data[6,1],0)
+          v.j<- v.i[2:1]*-1 # orthonormal
+        }
+        
+        m<-sweep(matrix_data[, 1:2], 2, origen, FUN = "-")
+        
+        
+        # Pre-allocar la matriz con NA o ceros
+        newm <- matrix(NA, nrow = nrow(m), ncol = 2)
+        
+        # Matriz identidad
+  
+        a<- matrix( data = c( v.i,v.j ) , nrow = 2 )
+        
+        # Calcular denominador común fuera del bucle
+        denominador_comun <- a[1, 1] * a[2, 2] - a[2, 1] * a[2, 1]
+        
+        for ( k in 1:nrow( m ) ) {
+          
+          b<- as.matrix( c( m[ k , ] ) , ncol = 1 )
+          
+          
+          newx <- (a[2, 2] * b[1] - b[2] * a[1, 2]) / denominador_comun
+          newy <- (a[1, 1] * b[2] - b[1] * a[2, 1]) / denominador_comun
+          
+          newm[k, ] <- c(newx, newy)
+        }
         # Combine individual keypoints data into a data frame with metadata
         frame_data_list <- list(matrix_data = matrix_data,
-                                type_point = gsub("_2d", "", colnames(rawData[j])),
+                                newm = newm,
+                                type_points = gsub("_2d", "", colnames(rawData[j])),
                                 people_id = i,
-                                point = c(0:(nrow(matrix_data) - 1)),
+                                points = c(0:(nrow(matrix_data) - 1)),
                                 id = id, 
                                 frame = frame)
         
@@ -104,21 +136,22 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
         all_data[[length(all_data) + 1]] <- df
       }
     }
-    }  else {
-      # If rawData is empty, print a message indicating it
-      cat("Archivo:", basename(frame_file), "\n")
-      cat("Lista vacía\n\n")
-      archived[length(archived) + 1] <- frame_file
-    }
     
     cat("\n")  # Separador entre archivos
     
-    print(paste0("The frame ", frame, " has been read"))
+    cat("\nThe frame ", frame, " has been read\n")
+    
+    }  else {
+      # If rawData is empty, print a message indicating it
+      cat("File:", basename(frame_file), "\n")
+      cat("File is  empty\n\n")
+      # archived[length(archived) + 1] <- frame_file # activar ne caso de querer info de los frames vacíos.
+    }
+    
   }
   # Combine all the individual frames into one data frame
   final_data <- do.call(rbind, all_data)
-  colnames(final_data)[1:3] <- c("x", "y", "c")
-  final_data[c("x","y")][final_data[c("x","y")] == 0] <- NA #Zeros as NAs
+  colnames(final_data)[1:5] <- c("x", "y", "c","nx","ny")
   
   if (!no_save) {
     # Use processed_id for auto-naming if output.file is NULL or empty
@@ -161,5 +194,6 @@ dfMaker <- function(input.folder, config.path, output.file = NULL, output.path=N
 
 
 # save new version
-save(dfMaker,file="dfMaker/functionsRData/dfMaker.rda")
+# save(dfMaker,file="dfMaker/functionsRData/dfMaker.rda")
+
 
